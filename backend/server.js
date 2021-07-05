@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
 import blogRouter from "./routes/blog.js";
+import authRouter from "./routes/auth.js";
 
 dotenv.config({ path: ".env" });
 
@@ -22,6 +23,7 @@ if (process.env.NODE_ENV === "development") {
 
 //routes middleware
 app.use("/blog", blogRouter);
+app.use("/auth", authRouter);
 
 //routes
 app.get("/api", (req, res) => {
