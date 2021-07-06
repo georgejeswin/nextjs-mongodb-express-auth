@@ -3,7 +3,7 @@ import crypto from "crypto";
 
 const userSchema = mongoose.Schema(
   {
-    userName: {
+    username: {
       type: String,
       required: true,
       trim: true,
@@ -32,7 +32,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    salt: Number,
+    salt: String,
     about: {
       type: String,
     },
@@ -51,6 +51,43 @@ const userSchema = mongoose.Schema(
   },
   { timestamp: true }
 );
+
+userSchema
+  .virtual("password")
+  .set(function (password) {
+    //create a temp varialble called _password
+    this._password = password;
+
+    //generate salt
+    this.salt = this.makesalt();
+
+    //encrypt password
+    this.hashed_password = this.encryptPassword(password);
+  })
+  .get(function () {
+    return this._password;
+  });
+
+userSchema.methods = {
+  authenticate: function (plainPassword) {
+    return this.encryptPassword(plainPassword) === this.hashed_password;
+  },
+
+  encryptPassword: function (password) {
+    if (!password) return "";
+    try {
+      return crypto
+        .createHmac("sha1", this.salt)
+        .update(password)
+        .digest("hex");
+    } catch (err) {
+      return "";
+    }
+  },
+  makesalt: function () {
+    return Math.round(new Date().valueOf * Math.random()) + "";
+  },
+};
 
 const UserModel = mongoose.model("UserModel", userSchema);
 

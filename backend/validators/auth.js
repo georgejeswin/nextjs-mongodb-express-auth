@@ -7,3 +7,10 @@ export const userSignupValidator = [
     .isLength({ min: 6 })
     .withMessage("Password must be atleast 6 characters"),
 ];
+
+export const userSigninValidator = [
+  check("email").isEmail().withMessage("Enter a valid Email address"),
+  check("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be atleast 6 characters"),
+];
